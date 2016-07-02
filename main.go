@@ -194,8 +194,8 @@ func sendAck(header *tcp.Header, lAddr, rAddr string) {
 	newHeader := tcp.Header{
 		Source:      header.Destination,
 		Destination: header.Source,
-		SeqNum:      header.AckNum + 1,
-		AckNum:      header.SeqNum + 1,
+		SeqNum:      header.AckNum,
+		AckNum:      header.SeqNum,
 		DataOffset:  5,
 		Reserved:    0,
 		ECN:         0,
@@ -203,18 +203,23 @@ func sendAck(header *tcp.Header, lAddr, rAddr string) {
 		Window:      0,
 		Checksum:    0,
 		Urgent:      0,
-		Options:     []tcp.Option{},
+		Options:     nil,
+	}
+	if header.HasFlag(tcp.SYN) && header.HasFlag(tcp.ACK) {
+		newHeader.AckNum += 1
 	}
 	buf := newHeader.Marshal()
 	newHeader.Checksum = tcp.Checksum(buf, lAddr, rAddr)
 	buf = newHeader.Marshal()
 
+	if header.HasFlag(tcp.SYN) && header.HasFlag(tcp.ACK) {
+		buf = append(buf, data...)
+	}
 	_, err = conn.Write(buf)
 	if err != nil {
 		// TODO: error handling
 		log.Fatalf("Error sending ack: %s\n", err)
 	}
-
 	numSendACK++
 }
 
