@@ -123,8 +123,7 @@ func listen(lAddr, rAddr string) {
 	if err != nil {
 		log.Fatalf("Error listening ip stack: %s\n", err)
 	}
-	// TODO: slice length?!
-	buf := make([]byte, 1024)
+	buf := make([]byte, 4096)
 	for {
 		n, raddr, err := conn.ReadFrom(buf)
 		if err != nil {
