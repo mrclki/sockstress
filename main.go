@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/marcelki/sockstress/tcp"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net"
@@ -80,6 +81,26 @@ func main() {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	if *payload != "" {
+		fileInfo, err := os.Stat(*payload)
+		if err != nil {
+			if os.IsNotExist(err) {
+				fmt.Fprintf(os.Stderr, "Given file %s does not exist\n", *payload)
+				os.Exit(1)
+			}
+			fmt.Fprintf(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+		if fileInfo.IsDir() {
+			fmt.Fprintf(os.Stderr, "Directories are not supported as payloads\n")
+			os.Exit(1)
+		}
+		data, err = ioutil.ReadFile(*payload)
+		if err != nil {
+			log.Fatalf("Error reading %s file\n", *payload)
+		}
 	}
 
 	go sendSyn(lAddr, dstIP, port)
