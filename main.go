@@ -137,13 +137,12 @@ func listen(lAddr, rAddr string) {
 		}
 		header := tcp.NewHeader(buf[:n])
 
-		// TODO: catch other flags for statistics
 		if header.HasFlag(tcp.SYN) && header.HasFlag(tcp.ACK) {
 			numRecvSYNACK++
-			// TODO: goroutine here?!
 			sendAck(header, lAddr, rAddr)
 		} else if header.HasFlag(tcp.ACK) {
 			numRecvACK++
+			sendAck(header, lAddr, rAddr)
 		} else if header.HasFlag(tcp.RST) {
 			numRecvRST++
 		}
