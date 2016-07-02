@@ -15,8 +15,11 @@ import (
 var (
 	p          = flag.Uint("p", 1, "")
 	ifaceParam = flag.String("i", "", "")
+	payload    = flag.String("data", "", "")
 	help       = flag.Bool("h", false, "")
 	delay      = flag.Duration("d", 1000, "")
+
+	data []byte
 
 	numSendACK    int
 	numSendSYN    int
@@ -28,11 +31,12 @@ var (
 var usage = `Usage: sockstress [options...] <ip-address>
 
 Options:
-  -p    The destination port to attack.
-  -i    The network interface to use.
-  -d    The delay between SYN packets
-        You can choose your unit of time (e.g. 1ns, 0.001s)
-  -h    Display this help.
+  -p      The destination port to attack.
+  -i      The network interface to use.
+  -d      The delay between SYN packets
+          You can choose your unit of time (e.g. 1ns, 0.001s)
+  -data   Choose a file to use as the payload/data
+  -h      Display this help.
 
 `
 
