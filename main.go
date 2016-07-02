@@ -157,6 +157,7 @@ func sendSyn(lAddr, rAddr string, dst uint16) {
 		log.Fatalf("Error sending syn: %s\n", err)
 	}
 	defer conn.Close()
+	buf := make([]byte, 256)
 	for {
 		p := tcp.Header{
 			Source:      randUint16(1024, 65535),
@@ -170,9 +171,9 @@ func sendSyn(lAddr, rAddr string, dst uint16) {
 			Window:      0xAAAA,
 			Checksum:    0,
 			Urgent:      0,
-			Options:     []tcp.Option{},
+			Options:     nil,
 		}
-		buf := p.Marshal()
+		buf = p.Marshal()
 		p.Checksum = tcp.Checksum(buf, lAddr, rAddr)
 		buf = p.Marshal()
 
@@ -181,7 +182,6 @@ func sendSyn(lAddr, rAddr string, dst uint16) {
 			// TODO: error handling
 			log.Fatalf("Error sending syn: %s\n", err)
 		}
-
 		numSendSYN++
 		time.Sleep(*delay)
 	}
