@@ -108,7 +108,7 @@ func main() {
 
 	ticker := time.Tick(time.Second)
 	for {
-		fmt.Printf("SENT: syn: %v ack: %v - RECV: synack: %v ack: %v rst: %v\r", numSendSYN, numSendACK, numRecvSYNACK, numRecvACK, numRecvACK)
+		fmt.Printf("SENT: syn: %v ack: %v - RECV: synack: %v ack: %v rst: %v\r", numSendSYN, numSendACK, numRecvSYNACK, numRecvACK, numRecvRST)
 		<-ticker
 	}
 
